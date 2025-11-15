@@ -1,25 +1,37 @@
 import telebot
 import random
 import os
-
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import datetime as dt
 import requests
 
 from dotenv import load_dotenv
+import replicate
+
 from pathlib import Path
 
 load_dotenv()
 
+
+CHAT_ID = 571893820
+TEXT =  'аня за тобою виїдуть о 16:30'
+
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
 OPENWEATHER_KEY = os.getenv("OPENWEATHER_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+REPLICATE_API_KEY = os.getenv("REPLICATE_API_KEY")
+
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 BASE_URL = 'http://api.openweathermap.org/data/2.5/weather?'
 
 user_data = {}
+payload = {"chat_id": CHAT_ID, "text": TEXT}
+
+r = requests.post(url, data=payload)
+print(r.json())
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -184,5 +196,7 @@ def contacts_command(message):
 
     markup.add(btn1, btn2, btn3)
     bot.send_message(chat_id, 'Мої контакти для зв’язку 🙂', reply_markup=markup)
+
+
 
 bot.polling(none_stop=True)
